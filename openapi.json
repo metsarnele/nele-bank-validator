@@ -1,274 +1,64 @@
 {
-  "openapi": "3.0.0",
+  "openapi": "3.0.3",
   "info": {
-    "title": "Bank API",
-    "version": "1.0.0",
-    "description": "Bank API with interoperability features"
+    "title": "Nele Bank API",
+    "description": "Secure banking application that integrates with the central bank and enables inter-bank transactions",
+    "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "https://bank.eerovallistu.site/",
-      "description": "Current server"
+      "url": "https://nele.my/nele-bank/api/v1",
+      "description": "Production server"
+    },
+    {
+      "url": "/",
+      "description": "Development server"
     }
   ],
-  "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
-    },
-    "schemas": {
-      "Account": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "description": "Account ID"
-          },
-          "accountNumber": {
-            "type": "string",
-            "description": "Unique account number with bank prefix"
-          },
-          "userId": {
-            "type": "integer",
-            "description": "ID of the account owner"
-          },
-          "balance": {
-            "type": "number",
-            "format": "float",
-            "description": "Current account balance"
-          },
-          "currency": {
-            "type": "string",
-            "enum": [
-              "EUR",
-              "USD",
-              "GBP",
-              "SEK"
-            ],
-            "description": "Account currency"
-          },
-          "name": {
-            "type": "string",
-            "description": "Account name/description"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Account creation date"
-          }
-        },
-        "required": [
-          "accountNumber",
-          "userId",
-          "currency",
-          "name"
-        ]
-      },
-      "Transaction": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "description": "Transaction ID"
-          },
-          "fromAccount": {
-            "type": "string",
-            "description": "Source account number"
-          },
-          "toAccount": {
-            "type": "string",
-            "description": "Destination account number"
-          },
-          "amount": {
-            "type": "number",
-            "format": "float",
-            "description": "Transaction amount"
-          },
-          "currency": {
-            "type": "string",
-            "enum": [
-              "EUR",
-              "USD",
-              "GBP"
-            ],
-            "description": "Transaction currency"
-          },
-          "explanation": {
-            "type": "string",
-            "description": "Transaction description"
-          },
-          "senderName": {
-            "type": "string",
-            "description": "Name of the sender"
-          },
-          "receiverName": {
-            "type": "string",
-            "description": "Name of the receiver"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "pending",
-              "inProgress",
-              "completed",
-              "failed"
-            ],
-            "description": "Transaction status"
-          },
-          "isExternal": {
-            "type": "boolean",
-            "description": "Whether this is an external transaction"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Transaction creation date"
-          }
-        }
-      }
-    },
-    "responses": {
-      "UnauthorizedError": {
-        "description": "Access token is missing or invalid",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "string",
-                  "example": "error"
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Authentication required"
-                }
-              }
-            }
-          }
-        }
-      },
-      "ValidationError": {
-        "description": "Input validation error",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "string",
-                  "example": "error"
-                },
-                "errors": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "field": {
-                        "type": "string"
-                      },
-                      "message": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "security": [
+  "tags": [
     {
-      "bearerAuth": []
+      "name": "Users",
+      "description": "User management operations"
+    },
+    {
+      "name": "Sessions",
+      "description": "Authentication operations"
+    },
+    {
+      "name": "Accounts",
+      "description": "Account management operations"
+    },
+    {
+      "name": "Transactions",
+      "description": "Transaction operations"
     }
   ],
   "paths": {
-    "/health": {
-      "get": {
-        "summary": "Get API health status",
-        "security": [],
-        "tags": [
-          "System"
-        ],
-        "responses": {
-          "200": {
-            "description": "API is operational",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "API is operational"
-                    },
-                    "timestamp": {
-                      "type": "string",
-                      "format": "date-time"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/users": {
       "post": {
+        "tags": ["Users"],
         "summary": "Register a new user",
-        "tags": [
-          "Users"
-        ],
+        "description": "Create a new user account with default EUR account",
+        "operationId": "registerUser",
         "security": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "username",
-                  "password",
-                  "fullName",
-                  "email"
-                ],
-                "properties": {
-                  "username": {
-                    "type": "string",
-                    "example": "jsmith"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "securePass123!"
-                  },
-                  "fullName": {
-                    "type": "string",
-                    "example": "John Smith"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "john.smith@example.com"
-                  }
-                }
+                "$ref": "#/components/schemas/UserRegistration"
+              },
+              "example": {
+                "name": "Miki Hiir",
+                "username": "miki",
+                "password": "SecurePass123"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "User registered successfully",
+            "description": "User successfully registered",
             "content": {
               "application/json": {
                 "schema": {
@@ -276,11 +66,29 @@
                   "properties": {
                     "status": {
                       "type": "string",
+                      "enum": ["success"],
                       "example": "success"
                     },
                     "message": {
                       "type": "string",
                       "example": "User registered successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Miki Hiir"
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "miki"
+                        }
+                      }
                     }
                   }
                 }
@@ -288,20 +96,7 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/ValidationError"
-          }
-        }
-      }
-    },
-    "/users/me": {
-      "get": {
-        "summary": "Get current user profile",
-        "tags": [
-          "Users"
-        ],
-        "responses": {
-          "200": {
-            "description": "User profile",
+            "description": "Invalid input data",
             "content": {
               "application/json": {
                 "schema": {
@@ -309,27 +104,35 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "example": "success"
+                      "enum": ["error"]
                     },
-                    "data": {
+                    "error": {
                       "type": "object",
                       "properties": {
-                        "id": {
-                          "type": "integer"
-                        },
-                        "username": {
-                          "type": "string"
-                        },
-                        "fullName": {
-                          "type": "string"
-                        },
-                        "email": {
+                        "code": {
                           "type": "string",
-                          "format": "email"
+                          "example": "VALIDATION_ERROR"
                         },
-                        "createdAt": {
+                        "message": {
                           "type": "string",
-                          "format": "date-time"
+                          "example": "Invalid request data"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              }
+                            }
+                          }
                         }
                       }
                     }
@@ -338,46 +141,117 @@
               }
             }
           },
+          "409": {
+            "description": "Username already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["error"]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Username already exists"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/current": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get current user's profile",
+        "description": "Retrieve the authenticated user's profile information",
+        "operationId": "getCurrentUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["error"],
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Authentication token is missing"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "/sessions": {
       "post": {
-        "summary": "Login user",
-        "tags": [
-          "Sessions"
-        ],
+        "tags": ["Sessions"],
+        "summary": "Log in a user",
+        "description": "Authenticate a user and create a new session",
+        "operationId": "loginUser",
         "security": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "username",
-                  "password"
-                ],
-                "properties": {
-                  "username": {
-                    "type": "string",
-                    "example": "jsmith"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "securePass123!"
-                  }
-                }
+                "$ref": "#/components/schemas/UserLogin"
+              },
+              "example": {
+                "username": "miki",
+                "password": "SecurePass123"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Login successful",
+            "description": "User logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
             "content": {
               "application/json": {
                 "schema": {
@@ -385,33 +259,62 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "example": "success"
+                      "enum": ["error"]
                     },
-                    "token": {
-                      "type": "string",
-                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                    },
-                    "user": {
+                    "error": {
                       "type": "object",
                       "properties": {
-                        "id": {
-                          "type": "integer"
-                        },
-                        "username": {
+                        "code": {
                           "type": "string"
                         },
-                        "fullName": {
+                        "message": {
                           "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              }
+                            }
+                          }
                         }
                       }
                     }
+                  }
+                },
+                "example": {
+                  "status": "error",
+                  "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "Invalid request data",
+                    "details": [
+                      {
+                        "field": "username",
+                        "message": "Required",
+                        "code": "invalid_type"
+                      },
+                      {
+                        "field": "password",
+                        "message": "Required",
+                        "code": "invalid_type"
+                      }
+                    ]
                   }
                 }
               }
             }
           },
           "401": {
-            "description": "Invalid credentials",
+            "description": "Error: Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
@@ -419,12 +322,26 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "example": "error"
+                      "enum": ["error"]
                     },
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid credentials"
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
                     }
+                  }
+                },
+                "example": {
+                  "status": "error",
+                  "error": {
+                    "code": "AUTHENTICATION_ERROR",
+                    "message": "Invalid username or password"
                   }
                 }
               }
@@ -433,243 +350,36 @@
         }
       },
       "delete": {
-        "summary": "Logout current user",
-        "tags": [
-          "Sessions"
-        ],
-        "responses": {
-          "200": {
-            "description": "User logged out successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully logged out"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          }
-        }
-      }
-    },
-    "/accounts": {
-      "get": {
-        "summary": "Get all accounts for current user",
-        "tags": [
-          "Accounts"
-        ],
-        "parameters": [
+        "tags": ["Sessions"],
+        "summary": "Log out current user",
+        "description": "End the current user session",
+        "operationId": "logoutUser",
+        "security": [
           {
-            "in": "query",
-            "name": "currency",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by currency (EUR, USD, GBP)"
-          },
-          {
-            "in": "query",
-            "name": "sort",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "balance",
-                "-balance",
-                "name",
-                "-name",
-                "createdAt",
-                "-createdAt"
-              ]
-            },
-            "description": "Sort accounts (prefix with - for descending)"
+            "bearerAuth": []
           }
         ],
         "responses": {
           "200": {
-            "description": "List of user accounts",
+            "description": "Successfully logged out",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Account"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a new account",
-        "tags": [
-          "Accounts"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "currency",
-                  "name"
-                ],
-                "properties": {
-                  "currency": {
-                    "type": "string",
-                    "enum": [
-                      "EUR",
-                      "USD",
-                      "GBP",
-                      "SEK"
-                    ],
-                    "example": "EUR"
-                  },
-                  "name": {
-                    "type": "string",
-                    "example": "Main Savings"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Account created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Account"
-                    },
                     "message": {
-                      "type": "string",
-                      "example": "Account created successfully"
+                      "type": "string"
                     }
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          }
-        }
-      }
-    },
-    "/transfers": {
-      "get": {
-        "summary": "Get all transactions for the user",
-        "tags": [
-          "Transactions"
-        ],
-        "responses": {
-          "200": {
-            "description": "List of user transactions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Transaction"
-                      }
-                    }
-                  }
+                },
+                "example": {
+                  "message": "Successfully logged out"
                 }
               }
             }
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          }
-        }
-      }
-    },
-    "/transfers/internal": {
-      "post": {
-        "summary": "Create a new internal transaction",
-        "tags": [
-          "Transactions"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "fromAccount",
-                  "toAccount",
-                  "amount",
-                  "explanation"
-                ],
-                "properties": {
-                  "fromAccount": {
-                    "type": "string",
-                    "example": "353c8b72e4a9f15d3b82"
-                  },
-                  "toAccount": {
-                    "type": "string",
-                    "example": "353f9a23d1c7b45e8t91"
-                  },
-                  "amount": {
-                    "type": "number",
-                    "example": 150
-                  },
-                  "explanation": {
-                    "type": "string",
-                    "example": "Rent payment for January"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Transaction created successfully",
+            "description": "Not authenticated",
             "content": {
               "application/json": {
                 "schema": {
@@ -677,79 +387,118 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "example": "success"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Transaction"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "402": {
-            "description": "Insufficient funds",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
+                      "enum": ["error"],
                       "example": "error"
                     },
                     "message": {
                       "type": "string",
-                      "example": "Insufficient funds"
+                      "example": "Authentication token is missing"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "tags": ["Transactions"],
+        "summary": "Get transaction history",
+        "description": "Retrieve the transaction history for the authenticated user",
+        "operationId": "getTransactionHistory",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["success"],
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TransactionResponse"
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "404": {
-            "description": "Account not found"
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["error"],
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Authentication token is missing"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
-      }
-    },
-    "/transfers/external": {
+      },
       "post": {
-        "summary": "Create a new external transaction",
-        "tags": [
-          "Transactions"
+        "tags": ["Transactions"],
+        "summary": "Create a new transaction",
+        "description": "Create a new internal or external transaction",
+        "operationId": "createTransaction",
+        "security": [
+          {
+            "bearerAuth": []
+          }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "fromAccount",
-                  "toAccount",
-                  "amount",
-                  "explanation"
-                ],
-                "properties": {
-                  "fromAccount": {
-                    "type": "string",
-                    "example": "353c8b72e4a9f15d3b82"
-                  },
-                  "toAccount": {
-                    "type": "string",
-                    "example": "512f9a23d1c7b45e8t91"
-                  },
-                  "amount": {
-                    "type": "number",
-                    "example": 150
-                  },
-                  "explanation": {
-                    "type": "string",
-                    "example": "Payment for services"
+                "$ref": "#/components/schemas/TransferRequest"
+              },
+              "examples": {
+                "internal": {
+                  "summary": "Internal transfer example",
+                  "value": {
+                    "fromAccountId": 1,
+                    "toAccount": "1234567890",
+                    "amount": 100.50,
+                    "currency": "EUR",
+                    "description": "Rent payment",
+                    "type": "internal"
+                  }
+                },
+                "external": {
+                  "summary": "External transfer example",
+                  "value": {
+                    "fromAccountId": 1,
+                    "toAccount": "EE123456789",
+                    "toBankId": "CITIUS33",
+                    "amount": 500.00,
+                    "currency": "EUR",
+                    "description": "International payment",
+                    "type": "external"
                   }
                 }
               }
@@ -764,12 +513,11 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
+                    "message": {
+                      "type": "string"
                     },
-                    "data": {
-                      "$ref": "#/components/schemas/Transaction"
+                    "transaction": {
+                      "$ref": "#/components/schemas/TransferResponse"
                     }
                   }
                 }
@@ -777,36 +525,7 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "402": {
-            "description": "Insufficient funds"
-          },
-          "404": {
-            "description": "Account not found"
-          }
-        }
-      }
-    },
-    "/transfers/{id}": {
-      "get": {
-        "summary": "Get transaction details",
-        "tags": [
-          "Transactions"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Transaction details",
+            "description": "Invalid input or insufficient funds",
             "content": {
               "application/json": {
                 "schema": {
@@ -814,10 +533,18 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "example": "success"
+                      "enum": ["error"]
                     },
-                    "data": {
-                      "$ref": "#/components/schemas/Transaction"
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
                     }
                   }
                 }
@@ -825,46 +552,7 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "description": "Access forbidden"
-          },
-          "404": {
-            "description": "Transaction not found"
-          }
-        }
-      }
-    },
-    "/transfers/incoming": {
-      "post": {
-        "summary": "Process incoming transfer",
-        "tags": [
-          "Bank-to-Bank"
-        ],
-        "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "jwt"
-                ],
-                "properties": {
-                  "jwt": {
-                    "type": "string",
-                    "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEiLCJ0eXAiOiJKV1QifQ..."
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Transaction processed successfully",
+            "description": "Not authenticated",
             "content": {
               "application/json": {
                 "schema": {
@@ -872,62 +560,20 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "example": "success"
+                      "enum": ["error"],
+                      "example": "error"
                     },
-                    "receiverName": {
+                    "message": {
                       "type": "string",
-                      "example": "John Smith"
-                    },
-                    "transactionId": {
-                      "type": "integer",
-                      "example": 42
+                      "example": "Authentication token is missing"
                     }
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "Invalid JWT or signature"
-          },
           "404": {
-            "description": "Destination account not found"
-          },
-          "500": {
-            "description": "Processing error"
-          }
-        }
-      }
-    },
-    "/transactions/b2b": {
-      "post": {
-        "summary": "Process incoming transfer (Bank-to-Bank)",
-        "tags": [
-          "Bank-to-Bank"
-        ],
-        "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "jwt"
-                ],
-                "properties": {
-                  "jwt": {
-                    "type": "string",
-                    "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEiLCJ0eXAiOiJKV1QifQ..."
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Transaction processed successfully",
+            "description": "Receiver not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -935,43 +581,31 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "example": "success"
+                      "enum": ["error"],
+                      "example": "error"
                     },
-                    "receiverName": {
+                    "message": {
                       "type": "string",
-                      "example": "John Smith"
-                    },
-                    "transactionId": {
-                      "type": "integer",
-                      "example": 42
+                      "example": "Receiver account ABC123456789 not found"
                     }
                   }
                 }
               }
             }
-          },
-          "400": {
-            "description": "Invalid JWT or signature"
-          },
-          "404": {
-            "description": "Destination account not found"
-          },
-          "500": {
-            "description": "Processing error"
           }
         }
       }
     },
-    "/jwks.json": {
+    "/transactions/jwks": {
       "get": {
-        "summary": "Get JSON Web Key Set",
-        "tags": [
-          "Security"
-        ],
+        "tags": ["Transactions"],
+        "summary": "Get bank's public keys in JWKS format",
+        "description": "Retrieve the bank's public keys for verifying transaction signatures",
+        "operationId": "getJWKS",
         "security": [],
         "responses": {
           "200": {
-            "description": "JWKS with public keys",
+            "description": "JWKS containing public keys",
             "content": {
               "application/json": {
                 "schema": {
@@ -988,20 +622,53 @@
                           "kid": {
                             "type": "string"
                           },
-                          "use": {
-                            "type": "string"
-                          },
-                          "alg": {
-                            "type": "string"
-                          },
                           "n": {
                             "type": "string"
                           },
                           "e": {
                             "type": "string"
+                          },
+                          "use": {
+                            "type": "string"
+                          },
+                          "alg": {
+                            "type": "string"
                           }
                         }
                       }
+                    }
+                  },
+                  "example": {
+                    "keys": [
+                      {
+                        "kty": "RSA",
+                        "n": "sNO9smFz1GKJjDpjE-KTfS-Ri4O9V0sOJC7RZXXUZ3fbi3UwcD-MtQ8iek0JZEKELgjQoagugDm9PQ67FHQEdBZ__zrt6hxwA2_TAE0XjhztUJNzmw2S6vPf-TaLgWt4-mVtwNp-uAnYd_kO4xdtPBwySF9vLD4UmyXJJqXl8z3mBZ723kNkhUmxtKBRSSA8fmARDHqLN3YwU5Hd0Nvd9Mj1PYRWd1gz9wFEXqpbunQsggLuF2d5JgZdC598tyjSPrKmOODU3r53MD_0VbMTGuXAkBWauk3eEJ5byTURbtpy77aUDmB5fHEY7aSwxsOYNiCo3bXwO6GQaoOwt9hZkQ",
+                        "e": "AQAB",
+                        "kid": "NELE",
+                        "use": "sig",
+                        "alg": "RS256"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["error"],
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Authentication token is missing"
                     }
                   }
                 }
@@ -1009,85 +676,7 @@
             }
           },
           "500": {
-            "description": "Error retrieving JWKS"
-          }
-        }
-      }
-    },
-    "/bank-info": {
-      "get": {
-        "summary": "Get bank information",
-        "tags": [
-          "Info"
-        ],
-        "responses": {
-          "200": {
-            "description": "Bank information",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "example": "Eero Bank"
-                    },
-                    "prefix": {
-                      "type": "string",
-                      "example": 353
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          }
-        }
-      }
-    },
-    "/exchange-rates": {
-      "get": {
-        "summary": "Get current exchange rates",
-        "tags": [
-          "Currency"
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "base",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "EUR",
-                "USD",
-                "GBP",
-                "SEK"
-              ]
-            },
-            "description": "Base currency"
-          },
-          {
-            "in": "query",
-            "name": "target",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "EUR",
-                "USD",
-                "GBP",
-                "SEK"
-              ]
-            },
-            "description": "Target currency (optional - if not provided returns all rates)"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Current exchange rates",
+            "description": "Server error",
             "content": {
               "application/json": {
                 "schema": {
@@ -1095,23 +684,82 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "example": "success"
+                      "enum": ["error"]
                     },
-                    "base": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "status": "error",
+                    "message": "Failed to generate JWKS"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/b2b": {
+      "post": {
+        "tags": ["Transactions"],
+        "summary": "Accept transaction from another bank",
+        "description": "Process an incoming transaction from another bank",
+        "operationId": "processB2BTransaction",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/B2BTransaction"
+              },
+              "example": {
+                "jwt": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkJBTksifQ.eyJ0cmFuc2FjdGlvbklkIjoiMTIzZTQ1NjctZTg5Yi0xMmQzLWE0NTYtNDI2NjE0MTc0MDAwIiwiZnJvbUFjY291bnQiOiJFRTk4NzY1NDMyMSIsInRvQWNjb3VudCI6IjEyMzQ1Njc4OTAiLCJhbW91bnQiOjEwMDAuMDAsImN1cnJlbmN5IjoiRVVSIiwiZGVzY3JpcHRpb24iOiJCMkIgUGF5bWVudCBmb3IgU2VydmljZXMifQ.signature"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transfer accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
                       "type": "string",
-                      "example": "EUR"
+                      "enum": ["success"]
                     },
-                    "timestamp": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "status": "success",
+                  "message": "Transaction processed successfully"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
                       "type": "string",
-                      "format": "date-time"
+                      "enum": ["error"],
+                      "example": "error"
                     },
-                    "rates": {
-                      "type": "object",
-                      "example": {
-                        "USD": 1.09,
-                        "GBP": 0.86,
-                        "SEK": 11.21
-                      }
+                    "message": {
+                      "type": "string",
+                      "example": "Authentication token is missing"
                     }
                   }
                 }
@@ -1119,7 +767,7 @@
             }
           },
           "400": {
-            "description": "Invalid currency",
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
@@ -1127,19 +775,86 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "example": "error"
+                      "enum": ["error"]
                     },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "msg": {
-                            "type": "string",
-                            "example": "Base currency must be EUR, USD, GBP, or SEK"
-                          }
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
                         }
                       }
+                    }
+                  }
+                },
+                "example": {
+                  "status": "error",
+                  "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "Parsing JWT payload failed: reason here"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "error": "Account not found"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error occurred during transaction processing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["error"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "status": "error",
+                    "message": "Cannot verify your signature: The jwksUrl of your bank is missing"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Central Bank error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["error"]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Central Bank error: Service temporarily unavailable"
                     }
                   }
                 }
@@ -1147,6 +862,502 @@
             }
           }
         }
+      }
+    },
+    "/accounts/{accountNumber}": {
+      "patch": {
+        "tags": ["Accounts"],
+        "summary": "Update account currency",
+        "description": "Update an account's currency with automatic balance conversion",
+        "operationId": "updateAccountCurrency",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accountNumber",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Account number"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountCurrencyUpdate"
+              },
+              "example": {
+                "currency": "USD"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account currency updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountCurrencyUpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["error"]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "status": "error",
+                  "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "Invalid request data",
+                    "details": [
+                      {
+                        "field": "username",
+                        "message": "Required",
+                        "code": "invalid_type"
+                      },
+                      {
+                        "field": "password",
+                        "message": "Required",
+                        "code": "invalid_type"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["error"],
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Authentication token is missing"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "error": "Account not found"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserRegistration": {
+        "type": "object",
+        "required": ["name", "username", "password"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z\\s-]+$",
+            "description": "Full name (can contain letters, spaces, and hyphens)"
+          },
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "description": "Username can only contain letters, numbers, underscores, and hyphens"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "description": "Password must be at least 8 characters"
+          }
+        }
+      },
+      "UserLogin": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username for login"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "User password"
+          }
+        }
+      },
+      "Account": {
+        "type": "object",
+        "required": ["id", "accountNumber", "userId", "currency", "balance"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Account ID"
+          },
+          "accountNumber": {
+            "type": "string",
+            "maxLength": 20,
+            "description": "Unique account number"
+          },
+          "userId": {
+            "type": "integer",
+            "description": "Owner user ID"
+          },
+          "currency": {
+            "type": "string",
+            "enum": ["EUR", "USD", "GBP"],
+            "description": "Account currency"
+          },
+          "balance": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Current balance"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AccountCurrencyUpdate": {
+        "type": "object",
+        "required": ["currency"],
+        "properties": {
+          "currency": {
+            "type": "string",
+            "enum": ["EUR", "USD", "GBP"],
+            "description": "New currency for the account"
+          }
+        }
+      },
+      "AccountCurrencyUpdateResponse": {
+        "type": "object",
+        "required": ["message", "account", "conversionRate"],
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Account currency updated successfully"
+          },
+          "account": {
+            "type": "object",
+            "required": ["name", "balance", "currency", "number"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Account holder name"
+              },
+              "balance": {
+                "type": "number",
+                "description": "Updated account balance in new currency"
+              },
+              "currency": {
+                "type": "string",
+                "enum": ["EUR", "USD", "GBP"],
+                "description": "New account currency"
+              },
+              "number": {
+                "type": "string",
+                "description": "Account number"
+              }
+            }
+          },
+          "conversionRate": {
+            "type": "string",
+            "description": "Exchange rate used for conversion"
+          }
+        }
+      },
+      "TransferRequest": {
+        "type": "object",
+        "required": ["fromAccountId", "toAccount", "amount", "currency", "type"],
+        "properties": {
+          "fromAccountId": {
+            "type": "integer",
+            "description": "Source account ID",
+            "example": 1
+          },
+          "toAccount": {
+            "type": "string",
+            "maxLength": 20,
+            "description": "Destination account number",
+            "example": "1234567890"
+          },
+          "toBankId": {
+            "type": "string",
+            "maxLength": 10,
+            "description": "Destination bank ID (only for external transfers)",
+            "example": "CITIUS33"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0.01,
+            "description": "Transfer amount",
+            "example": 100.50
+          },
+          "currency": {
+            "type": "string",
+            "enum": ["EUR", "USD", "GBP"],
+            "description": "Currency of the transfer (must match both accounts for internal transfers)",
+            "example": "EUR"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Optional transfer description",
+            "example": "Rent payment"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["internal", "external"],
+            "description": "Type of transfer"
+          }
+        },
+        "example": {
+          "fromAccountId": 1,
+          "toAccount": "1234567890",
+          "amount": 100.50,
+          "currency": "EUR",
+          "description": "Rent payment",
+          "type": "internal"
+        }
+      },
+      "TransferResponse": {
+        "type": "object",
+        "required": ["transactionId", "status", "amount", "currency", "fromAccount", "toAccount"],
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique transaction identifier",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "completed", "failed"],
+            "description": "Transaction status"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Transfer amount",
+            "example": 100.50
+          },
+          "currency": {
+            "type": "string",
+            "enum": ["EUR", "USD", "GBP"],
+            "description": "Transfer currency",
+            "example": "EUR"
+          },
+          "fromAccount": {
+            "type": "string",
+            "description": "Source account number",
+            "example": "1234567890"
+          },
+          "toAccount": {
+            "type": "string",
+            "description": "Destination account number",
+            "example": "9876543210"
+          },
+          "toBankId": {
+            "type": "string",
+            "description": "Destination bank ID (only for external transfers)",
+            "example": "CITIUS33"
+          },
+          "description": {
+            "type": "string",
+            "description": "Transfer description",
+            "example": "Rent payment"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Transaction creation timestamp"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Transaction completion timestamp"
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Error message if transaction failed"
+          }
+        },
+        "example": {
+          "transactionId": "123e4567-e89b-12d3-a456-426614174000",
+          "status": "completed",
+          "amount": 100.50,
+          "currency": "EUR",
+          "fromAccount": "1234567890",
+          "toAccount": "9876543210",
+          "description": "Rent payment",
+          "createdAt": "2025-03-16T11:05:00Z",
+          "completedAt": "2025-03-16T11:05:02Z"
+        }
+      },
+      "TransactionResponse": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique transaction identifier",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "inProgress", "completed", "failed"],
+            "description": "Transaction status"
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Error message if transaction failed",
+            "example": "Insufficient funds"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Transaction amount",
+            "example": 100.50
+          },
+          "currency": {
+            "type": "string",
+            "enum": ["EUR", "USD", "GBP"],
+            "description": "Transaction currency",
+            "example": "EUR"
+          },
+          "fromAccount": {
+            "type": "string",
+            "description": "Source account number",
+            "example": "1234567890"
+          },
+          "toAccount": {
+            "type": "string",
+            "description": "Destination account number",
+            "example": "9876543210"
+          },
+          "description": {
+            "type": "string",
+            "description": "Transaction description",
+            "example": "Monthly rent payment"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Transaction creation timestamp",
+            "example": "2025-03-16T11:05:00Z"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Transaction completion timestamp",
+            "example": "2025-03-16T11:05:02Z"
+          }
+        },
+        "example": {
+          "transactionId": "123e4567-e89b-12d3-a456-426614174002",
+          "status": "completed",
+          "amount": 1000.00,
+          "currency": "EUR",
+          "fromAccount": "1234567890",
+          "toAccount": "9876543210",
+          "description": "Investment transfer",
+          "createdAt": "2025-03-16T11:05:00Z",
+          "completedAt": "2025-03-16T11:05:02Z"
+        }
+      },
+      "B2BTransaction": {
+        "type": "object",
+        "required": ["jwt"],
+        "properties": {
+          "jwt": {
+            "type": "string",
+            "description": "JWT token containing the transaction details and signature",
+            "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkJBTksifQ.eyJ0cmFuc2FjdGlvbklkIjoiMTIzZTQ1NjctZTg5Yi0xMmQzLWE0NTYtNDI2NjE0MTc0MDAwIiwiZnJvbUFjY291bnQiOiJFRTk4NzY1NDMyMSIsInRvQWNjb3VudCI6IjEyMzQ1Njc4OTAiLCJhbW91bnQiOjEwMDAuMDAsImN1cnJlbmN5IjoiRVVSIiwiZGVzY3JpcHRpb24iOiJCMkIgUGF5bWVudCBmb3IgU2VydmljZXMifQ.signature"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token obtained from the /sessions endpoint"
       }
     }
   }

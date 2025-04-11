@@ -1,6 +1,6 @@
-# Eero API Validator
+# Nele Bank API Validator
 
-This project validates the API of Brigita's banking system at https://bank.eerovallistu.site/docs/ against the provided OpenAPI specification in `openapi.json`. It detects and reports various discrepancies between the API implementation and its documentation.
+This project validates the API of Nele Bank at https://nele.my/nele-bank/api/v1 against the provided OpenAPI specification in `openapi.json`. It detects and reports various discrepancies between the API implementation and its documentation.
 
 ## Features
 

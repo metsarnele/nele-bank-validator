@@ -1,5 +1,5 @@
 {
-  "name": "eero-api-validator",
+  "name": "nele-bank-validator",
   "version": "1.0.0",
   "description": "Validates the API against the OpenAPI specification",
   "main": "index.ts",
@@ -17,7 +17,10 @@
     "commander": "^11.1.0"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/node": "^22.14.0",
-    "bun-types": "^1.2.8"
+    "@types/swagger-parser": "^7.0.1",
+    "bun-types": "^1.2.8",
+    "typescript": "^5.0.0"
   }
 }
