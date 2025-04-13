@@ -36,7 +36,9 @@
   "paths": {
     "/users": {
       "post": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Register a new user",
         "description": "Create a new user account with default EUR account",
         "operationId": "registerUser",
@@ -66,7 +68,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["success"],
+                      "enum": [
+                        "success"
+                      ],
                       "example": "success"
                     },
                     "message": {
@@ -104,7 +108,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"]
+                      "enum": [
+                        "error"
+                      ]
                     },
                     "error": {
                       "type": "object",
@@ -150,7 +156,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"]
+                      "enum": [
+                        "error"
+                      ]
                     },
                     "message": {
                       "type": "string",
@@ -166,7 +174,9 @@
     },
     "/users/current": {
       "get": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Get current user's profile",
         "description": "Retrieve the authenticated user's profile information",
         "operationId": "getCurrentUser",
@@ -195,7 +205,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"],
+                      "enum": [
+                        "error"
+                      ],
                       "example": "error"
                     },
                     "message": {
@@ -212,7 +224,9 @@
     },
     "/sessions": {
       "post": {
-        "tags": ["Sessions"],
+        "tags": [
+          "Sessions"
+        ],
         "summary": "Log in a user",
         "description": "Authenticate a user and create a new session",
         "operationId": "loginUser",
@@ -259,7 +273,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"]
+                      "enum": [
+                        "error"
+                      ]
                     },
                     "error": {
                       "type": "object",
@@ -322,7 +338,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"]
+                      "enum": [
+                        "error"
+                      ]
                     },
                     "error": {
                       "type": "object",
@@ -350,7 +368,9 @@
         }
       },
       "delete": {
-        "tags": ["Sessions"],
+        "tags": [
+          "Sessions"
+        ],
         "summary": "Log out current user",
         "description": "End the current user session",
         "operationId": "logoutUser",
@@ -387,7 +407,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"],
+                      "enum": [
+                        "error"
+                      ],
                       "example": "error"
                     },
                     "message": {
@@ -404,7 +426,9 @@
     },
     "/transactions": {
       "get": {
-        "tags": ["Transactions"],
+        "tags": [
+          "Transactions"
+        ],
         "summary": "Get transaction history",
         "description": "Retrieve the transaction history for the authenticated user",
         "operationId": "getTransactionHistory",
@@ -423,7 +447,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["success"],
+                      "enum": [
+                        "success"
+                      ],
                       "example": "success"
                     },
                     "data": {
@@ -446,7 +472,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"],
+                      "enum": [
+                        "error"
+                      ],
                       "example": "error"
                     },
                     "message": {
@@ -461,7 +489,9 @@
         }
       },
       "post": {
-        "tags": ["Transactions"],
+        "tags": [
+          "Transactions"
+        ],
         "summary": "Create a new transaction",
         "description": "Create a new internal or external transaction",
         "operationId": "createTransaction",
@@ -533,7 +563,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"]
+                      "enum": [
+                        "error"
+                      ]
                     },
                     "error": {
                       "type": "object",
@@ -560,7 +592,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"],
+                      "enum": [
+                        "error"
+                      ],
                       "example": "error"
                     },
                     "message": {
@@ -581,12 +615,36 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"],
+                      "enum": [
+                        "error"
+                      ],
                       "example": "error"
                     },
                     "message": {
                       "type": "string",
                       "example": "Receiver account ABC123456789 not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The accountFrom does not belong to the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "forbidden": {
+                    "value": {
+                      "error": "Forbidden"
                     }
                   }
                 }
@@ -598,7 +656,9 @@
     },
     "/transactions/jwks": {
       "get": {
-        "tags": ["Transactions"],
+        "tags": [
+          "Transactions"
+        ],
         "summary": "Get bank's public keys in JWKS format",
         "description": "Retrieve the bank's public keys for verifying transaction signatures",
         "operationId": "getJWKS",
@@ -663,7 +723,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"],
+                      "enum": [
+                        "error"
+                      ],
                       "example": "error"
                     },
                     "message": {
@@ -684,7 +746,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"]
+                      "enum": [
+                        "error"
+                      ]
                     },
                     "message": {
                       "type": "string"
@@ -703,7 +767,9 @@
     },
     "/transactions/b2b": {
       "post": {
-        "tags": ["Transactions"],
+        "tags": [
+          "Transactions"
+        ],
         "summary": "Accept transaction from another bank",
         "description": "Process an incoming transaction from another bank",
         "operationId": "processB2BTransaction",
@@ -731,7 +797,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["success"]
+                      "enum": [
+                        "success"
+                      ]
                     },
                     "message": {
                       "type": "string"
@@ -754,7 +822,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"],
+                      "enum": [
+                        "error"
+                      ],
                       "example": "error"
                     },
                     "message": {
@@ -775,7 +845,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"]
+                      "enum": [
+                        "error"
+                      ]
                     },
                     "error": {
                       "type": "object",
@@ -827,7 +899,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"]
+                      "enum": [
+                        "error"
+                      ]
                     },
                     "message": {
                       "type": "string"
@@ -850,7 +924,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"]
+                      "enum": [
+                        "error"
+                      ]
                     },
                     "message": {
                       "type": "string",
@@ -866,7 +942,9 @@
     },
     "/accounts/{accountNumber}": {
       "patch": {
-        "tags": ["Accounts"],
+        "tags": [
+          "Accounts"
+        ],
         "summary": "Update account currency",
         "description": "Update an account's currency with automatic balance conversion",
         "operationId": "updateAccountCurrency",
@@ -919,7 +997,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"]
+                      "enum": [
+                        "error"
+                      ]
                     },
                     "error": {
                       "type": "object",
@@ -982,7 +1062,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error"],
+                      "enum": [
+                        "error"
+                      ],
                       "example": "error"
                     },
                     "message": {
@@ -1020,7 +1102,11 @@
     "schemas": {
       "UserRegistration": {
         "type": "object",
-        "required": ["name", "username", "password"],
+        "required": [
+          "name",
+          "username",
+          "password"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -1045,7 +1131,10 @@
       },
       "UserLogin": {
         "type": "object",
-        "required": ["username", "password"],
+        "required": [
+          "username",
+          "password"
+        ],
         "properties": {
           "username": {
             "type": "string",
@@ -1060,7 +1149,13 @@
       },
       "Account": {
         "type": "object",
-        "required": ["id", "accountNumber", "userId", "currency", "balance"],
+        "required": [
+          "id",
+          "accountNumber",
+          "userId",
+          "currency",
+          "balance"
+        ],
         "properties": {
           "id": {
             "type": "integer",
@@ -1068,7 +1163,7 @@
           },
           "accountNumber": {
             "type": "string",
-            "maxLength": 20,
+            "maxLength": 50,
             "description": "Unique account number"
           },
           "userId": {
@@ -1077,7 +1172,11 @@
           },
           "currency": {
             "type": "string",
-            "enum": ["EUR", "USD", "GBP"],
+            "enum": [
+              "EUR",
+              "USD",
+              "GBP"
+            ],
             "description": "Account currency"
           },
           "balance": {
@@ -1097,18 +1196,28 @@
       },
       "AccountCurrencyUpdate": {
         "type": "object",
-        "required": ["currency"],
+        "required": [
+          "currency"
+        ],
         "properties": {
           "currency": {
             "type": "string",
-            "enum": ["EUR", "USD", "GBP"],
+            "enum": [
+              "EUR",
+              "USD",
+              "GBP"
+            ],
             "description": "New currency for the account"
           }
         }
       },
       "AccountCurrencyUpdateResponse": {
         "type": "object",
-        "required": ["message", "account", "conversionRate"],
+        "required": [
+          "message",
+          "account",
+          "conversionRate"
+        ],
         "properties": {
           "message": {
             "type": "string",
@@ -1116,7 +1225,12 @@
           },
           "account": {
             "type": "object",
-            "required": ["name", "balance", "currency", "number"],
+            "required": [
+              "name",
+              "balance",
+              "currency",
+              "number"
+            ],
             "properties": {
               "name": {
                 "type": "string",
@@ -1128,7 +1242,11 @@
               },
               "currency": {
                 "type": "string",
-                "enum": ["EUR", "USD", "GBP"],
+                "enum": [
+                  "EUR",
+                  "USD",
+                  "GBP"
+                ],
                 "description": "New account currency"
               },
               "number": {
@@ -1145,7 +1263,13 @@
       },
       "TransferRequest": {
         "type": "object",
-        "required": ["fromAccountId", "toAccount", "amount", "currency", "type"],
+        "required": [
+          "fromAccountId",
+          "toAccount",
+          "amount",
+          "currency",
+          "type"
+        ],
         "properties": {
           "fromAccountId": {
             "type": "integer",
@@ -1154,7 +1278,7 @@
           },
           "toAccount": {
             "type": "string",
-            "maxLength": 20,
+            "maxLength": 50,
             "description": "Destination account number",
             "example": "1234567890"
           },
@@ -1172,7 +1296,11 @@
           },
           "currency": {
             "type": "string",
-            "enum": ["EUR", "USD", "GBP"],
+            "enum": [
+              "EUR",
+              "USD",
+              "GBP"
+            ],
             "description": "Currency of the transfer (must match both accounts for internal transfers)",
             "example": "EUR"
           },
@@ -1184,7 +1312,10 @@
           },
           "type": {
             "type": "string",
-            "enum": ["internal", "external"],
+            "enum": [
+              "internal",
+              "external"
+            ],
             "description": "Type of transfer"
           }
         },
@@ -1199,7 +1330,14 @@
       },
       "TransferResponse": {
         "type": "object",
-        "required": ["transactionId", "status", "amount", "currency", "fromAccount", "toAccount"],
+        "required": [
+          "transactionId",
+          "status",
+          "amount",
+          "currency",
+          "fromAccount",
+          "toAccount"
+        ],
         "properties": {
           "transactionId": {
             "type": "string",
@@ -1209,7 +1347,11 @@
           },
           "status": {
             "type": "string",
-            "enum": ["pending", "completed", "failed"],
+            "enum": [
+              "pending",
+              "completed",
+              "failed"
+            ],
             "description": "Transaction status"
           },
           "amount": {
@@ -1219,7 +1361,11 @@
           },
           "currency": {
             "type": "string",
-            "enum": ["EUR", "USD", "GBP"],
+            "enum": [
+              "EUR",
+              "USD",
+              "GBP"
+            ],
             "description": "Transfer currency",
             "example": "EUR"
           },
@@ -1281,7 +1427,12 @@
           },
           "status": {
             "type": "string",
-            "enum": ["pending", "inProgress", "completed", "failed"],
+            "enum": [
+              "pending",
+              "inProgress",
+              "completed",
+              "failed"
+            ],
             "description": "Transaction status"
           },
           "errorMessage": {
@@ -1296,7 +1447,11 @@
           },
           "currency": {
             "type": "string",
-            "enum": ["EUR", "USD", "GBP"],
+            "enum": [
+              "EUR",
+              "USD",
+              "GBP"
+            ],
             "description": "Transaction currency",
             "example": "EUR"
           },
@@ -1342,7 +1497,9 @@
       },
       "B2BTransaction": {
         "type": "object",
-        "required": ["jwt"],
+        "required": [
+          "jwt"
+        ],
         "properties": {
           "jwt": {
             "type": "string",

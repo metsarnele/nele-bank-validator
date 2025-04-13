@@ -13,7 +13,7 @@ program
   .name('eero-api-validator')
   .description('Validates the API against the OpenAPI specification')
   .version('1.0.0')
-  .option('-v, --verbose', 'Show verbose output')
+
   .option('-u, --url <url>', 'API base URL', 'https://nele.my/nele-bank/api/v1')
   .option('-f, --file <file>', 'OpenAPI specification file', './openapi.json')
   .parse(process.argv);
@@ -21,7 +21,7 @@ program
 const options = program.opts();
 const API_BASE_URL = options.url as string;
 const OPENAPI_FILE = options.file as string;
-const VERBOSE = options.verbose as boolean;
+
 
 // Initialize validation tools
 const ajv = new Ajv({ 
@@ -41,7 +41,7 @@ const logger = {
   success: (msg: string): void => console.log(chalk.green(msg)),
   warning: (msg: string): void => console.log(chalk.yellow(msg)),
   error: (msg: string): void => console.log(chalk.red(msg)),
-  verbose: (msg: string): void => { if (VERBOSE) console.log(chalk.gray(msg)); }
+
 };
 
 // Types
@@ -316,9 +316,9 @@ async function testEndpoints(spec: OpenAPISpec): Promise<ValidationResult[]> {
         }
 
         // Log request details if verbose
-        logger.verbose(`Testing ${method.toUpperCase()} ${API_BASE_URL}${endpoint}`);
+
         if (requestBody) {
-          logger.verbose(`Request body: ${JSON.stringify(requestBody, null, 2)}`);
+
         }
 
         // Make the request
@@ -407,26 +407,14 @@ async function testEndpoints(spec: OpenAPISpec): Promise<ValidationResult[]> {
                 }
                 
                 if (example) {
-                  // Add detailed logging for debugging structure mismatches
-                  console.log('\n=== Structure Comparison Debug ===');
-                  console.log(`Endpoint: ${method.toUpperCase()} ${endpoint}`);
-                  console.log('Expected structure:', JSON.stringify(example, null, 2));
-                  console.log('Actual response:', JSON.stringify(response.data, null, 2));
-                  console.log('Expected type:', typeof example);
-                  console.log('Actual type:', typeof response.data);
-                  console.log('Expected keys:', Object.keys(example));
-                  console.log('Actual keys:', Object.keys(response.data));
-                  
+                  // Compare structure without debug output
                   const structureMismatch = compareStructure(example, response.data);
                   if (structureMismatch) {
-                    console.log('Mismatch found:', structureMismatch);
                     endpointResult.issues.push({
                       type: 'structure_mismatch',
                       message: `Response structure doesn't match example for ${method.toUpperCase()} ${endpoint}`,
                       details: structureMismatch
                     });
-                  } else {
-                    console.log('No structure mismatch detected by compareStructure function');
                   }
                 }
               }
@@ -617,7 +605,7 @@ function displayResults(results: ValidationResult[]): void {
     logger.error('\n=== Response Example Structure Mismatches ===');
     for (const result of structureMismatches) {
       console.log(`${result.method} ${result.endpoint}: ${result.issues[0].message}`);
-      if (result.issues[0].details && VERBOSE) {
+      if (result.issues[0].details) {
         console.log(`  Details: ${JSON.stringify(result.issues[0].details, null, 2)}`);
       }
     }
